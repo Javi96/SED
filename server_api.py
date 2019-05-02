@@ -59,19 +59,22 @@ class Server:
         2- rsa_keys: diccionario que asocia las ips de los clientes con sus claves RSA.
         3- max_speed: diccionario que asocia las velocidades máximas asociadas a cada tipo de vía.
         
-    '''
-    
+    '''    
     
     def __init__(self):
         self.client_ips=list()
         self.rsa_keys={}
         self.speeds_file='speed_db'
-        #self.max_speed={'route1': 120, 'route2': 100, 'route3': 80, 'route4': 50}
         self.max_speed=self.__load_speeds()
         self.puerto=5555
         self.ip=run_cmd('hostname -I')+':'+str(self.puerto)
 
-        print('my ip: ', self.ip)
+        print('Server initialization')
+        print('-----------------------------------------')
+        print( "Here's my ip: ", self.ip)
+        print('Route speeds: ', self.max_speed)
+        print('Connected clients :', self.client_ips)
+        print('-----------------------------------------')
         
     def __load_speeds(self):
         with open(self.speeds_file, "r") as myfile:
@@ -84,12 +87,6 @@ class Server:
             self.max_speed[parsed_line[0]]= json.loads(parsed_line[1].replace("'",'"'))
         
         return self.max_speed
-    
-
-        
-            
-        #Si ese tipo de ruta no existe, no hace nada.
-        print('Se ha intentado modificar un tipo de vía no existente.')
     
     def run(self):
         app.run(debug=False, host='0.0.0.0', port=self.puerto) 
@@ -104,8 +101,15 @@ def state():
 
 @app.route('/new_speed/<route_type>/<new_speed>', methods=['GET'])
 def change_road_speed(route_type,new_speed):
-    print(route_type)
-    print(new_speed)
+    
+    print('Cambio de velocidad')
+    print('-----------------------------------------')
+    print( "Route type: ", route_type)
+    print('New speed: ', new_speed)
+    print('Connected clients :', server.client_ips)
+    print('-----------------------------------------')
+    
+    
     if route_type in server.max_speed:
         server.max_speed[route_type]=new_speed
         
@@ -113,9 +117,14 @@ def change_road_speed(route_type,new_speed):
         for x in server.client_ips:
             u="http://"+x+":5555/modify_speed"
             p={'route_type':route_type, 'max_speed':new_speed, 'server_ip': server.ip}
-            r = requests.post(url=u, json=p)
-            print(r)
-    return 'OK'
+            r=requests.post(url=u, json=p)
+            print('-Sended to ',x,':5555. Response: ', r)
+            
+        return 'OK'
+
+    #Si ese tipo de ruta no existe, no hace nada.
+    print('Se ha intentado modificar un tipo de vía no existente.')
+
 '''
     Método para informar al servidor de que ha sucedido una infracción.
         
@@ -128,12 +137,10 @@ def process_infraction():
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
     
     ip=request.remote_addr
-    #ip= data['client_ip']
     route_type = data['client_route_type']
     date=data['client_infraction_date']
     real_speed=data['client_real_speed']
     max_speed=data['client_max_speed']
-    
     
     print('IP del cliente: ', ip)
     print('Tipo de via del cliente: ', route_type)
@@ -158,37 +165,19 @@ def process_infraction():
 def add_client():
     #El resultado es un string con forma de json. Reemplazamos ' por " para que encaje con el formato de json.
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
-    
     #Obtenemos la ip del nuevo cliente.
-    #ip= data['client_ip']
     ip=request.remote_addr
-    
-    
     #Obtenemos el tipo de vía en el cual se ha instalado el cliente.
     route_type = data['client_route_type']
-    
     #Obtenemos su clave RSA asociada.
     rsa_key= data['client_rsa_key']
-
     #Informamos a los demás clientes del nuevo cliente.
     #Le pasamos el RSA asociado y su IP.
-    
-    
     for x in server.client_ips:
-         print(x)
-         #-------------------------------------------------
-         #TERMINACIÓN DE LA FUNCIONALIDAD DEL CLIENTE DONDE 
-         #RECOGE LA RSA KEY Y LA IP DE UN NUEVO CLIENTE.
-       
-         #X CONTIENE TANTO LA IP COMO EL PUERTO (ENTRE :) EN FORMA DE STRING.
-        
-         #-------------------------------------------------
          u="http://"+x+":5555/add_new_neigh"
          p={'client_ip':ip, 'client_rsa_key': rsa_key}
-         r = requests.post(url=u, json=p)
-         print(r)
-         #print(u)
-         
+         requests.post(url=u, json=p)
+    
     #Añadimos la ip del nuevo cliente a la lista de ips.
     server.client_ips.append(ip)
     
@@ -197,7 +186,7 @@ def add_client():
     
     #DEBUGGING --------->Mostramos los valores que le devolvemos   
     
-    
+    print('----------------------------------------------------------------------')
     print('Un cliente con ip ', ip, ' se ha conectado al sistema.' )
     print('Su clave RSA es ', rsa_key, '.')
     print('Esta en el tipo de vía ', route_type , '.' )
@@ -206,10 +195,8 @@ def add_client():
 
     print('IPs clientes ',server.client_ips)
     print('Claves RSA asociadas al cliente ',server.rsa_keys)
-   
+    print('----------------------------------------------------------------------')
 
-
-    
     #Devolvemos al nuevo cliente: la lista de ips de los demás clientes, la tabla de 
     #velocidades máximas y las claves RSA.
     return str({"State":"OK","client_max_speed": server.max_speed[route_type], \

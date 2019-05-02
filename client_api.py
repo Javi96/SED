@@ -8,7 +8,7 @@ import sys
 from utils import run_cmd, run_rsa
 
 
-RSA_PATH_JAVI = '/home/javi/.ssh/id_rsa.pub'
+#RSA_PATH_JAVI = '/home/javi/.ssh/id_rsa.pub'
 RSA_PATH_RASP = '/etc/ssh/ssh_host_ed25519_key.pub'
 
 
@@ -57,10 +57,8 @@ class Client:
     #se conecta al servidor de una forma u otra.
     def __init__(self,rt):
         
-        #IP DEL CLIENTE: request.remote_addr
-        
+        #IP DEL CLIENTE: request.remote_addr        
         self.other_clients={} 
-        #self.server_ip = server_ip
         self.server_ip=server_ip
         self.port = '5555'
         self.client_ip = run_cmd('hostname -I') + ':' + self.port
@@ -71,27 +69,11 @@ class Client:
         #La conexión se realiza mediante la conexión post.
          
         u="http://"+self.server_ip+"/add_client"
-        
         p={'client_rsa_key': self.rsa_key, 'client_route_type':self.route_type}
-        
-        r = requests.post(url=u, json=p)
-        
+        r = requests.post(url=u, json=p)        
         data=json.loads(r.text.replace("'",'"'))
-        
-        
-        '''
-        if data['server_ip'] != server_ip:
-            raise Exception('Se ha recibido información no procedente del servidor')
-            
-        '''
-
-        '''
-        return str({"State":"OK","client_max_speed": server.max_speed[route_type], \
-               "ip_list": server.client_ips, "rsa_keys_list": server.rsa_keys })
-        '''
-        
+                
         self.max_speed=data['client_max_speed']
-        #self.ip_list=data['ip_list']
         self.other_clients=data['rsa_keys_list']
         
         print('Cliente configurado con parametros:')
@@ -103,18 +85,7 @@ class Client:
     def run(self): 
         app.run(debug=False, host='0.0.0.0', port=self.port) 
 
-    def informa_infraccion(self, time, speed):
-        #Informa al servidor de que ha sucedido una infracción.
-        u="http://"+self.server_ip+"/infraction"
-        p={'client_route_type': self.route_type, \
-           'client_infraction_date': 'FECHA' , 'client_max_speed': self.max_speed,
-           'client_real_speed':speed }
-        
-        #Se envía esta información al servidor.
-        #r=requests.post(url=u, json=p)
-        requests.post(url=u, json=p)
-        
-        #POR AHORA, NO ESPERAMOS RESPUESTA
+
         
 
 
@@ -125,16 +96,23 @@ class Client:
 def state():
     return 'Cliente API avaliable'
 
+@app.route('/informa_infraccion/<time>/<speed>')
+def informa_infraccion(time, speed):
+    #Informa al servidor de que ha sucedido una infracción.
+    u="http://"+client.server_ip+"/infraction"
+    p={'client_route_type': client.route_type, \
+       'client_infraction_date': 'FECHA' , 'client_max_speed': client.max_speed,
+       'client_real_speed':speed }
+    
+    #Se envía esta información al servidor.
+    requests.post(url=u, json=p)        
+    #POR AHORA, NO ESPERAMOS RESPUESTA
+
 
 @app.route('/add_new_neigh',methods=['GET','POST'])
 def add_new_neighbour():
     print('Se ha agregado un vecino ')
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
-    
-    '''    
-    if data['server_ip'] != server_ip:
-            raise Exception('Se ha recibido información no procedente del servidor')
-    '''
     if client.server_ip.split(':')[0] != request.remote_addr:
         raise Exception('Se ha recibido información no procedente del servidor')
     
@@ -147,10 +125,6 @@ def add_new_neighbour():
 def modify_speed():
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
     
-    '''    
-    if data['server_ip'] != server_ip:
-            raise Exception('Se ha recibido información no procedente del servidor')
-    '''
     if client.server_ip.split(':')[0] != request.remote_addr:
         raise Exception('Se ha recibido información no procedente del servidor')
     
