@@ -123,7 +123,8 @@ def process_infraction():
     #El resultado es un string con forma de json. Reemplazamos ' por " para que encaje con el formato de json.
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
     
-    ip= data['client_ip']
+    ip=request.remote_addr
+    #ip= data['client_ip']
     route_type = data['client_route_type']
     date=data['client_infraction_date']
     real_speed=data['client_real_speed']
@@ -155,7 +156,9 @@ def add_client():
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
     
     #Obtenemos la ip del nuevo cliente.
-    ip= data['client_ip']
+    #ip= data['client_ip']
+    ip=request.remote_addr
+    
     
     #Obtenemos el tipo de vía en el cual se ha instalado el cliente.
     route_type = data['client_route_type']

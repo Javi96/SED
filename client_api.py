@@ -56,8 +56,12 @@ class Client:
     #Constructor. El cliente, en función de los parámetros que le proporcionamos
     #se conecta al servidor de una forma u otra.
     def __init__(self,rt):
+        
+        #IP DEL CLIENTE: request.remote_addr
+        
         self.other_clients={} 
-        self.server_ip = server_ip
+        #self.server_ip = server_ip
+        self.server_ip=request.remote_addr
         self.port = '5555'
         self.client_ip = run_cmd('hostname -I') + ':' + self.port
         self.route_type = rt
@@ -75,10 +79,13 @@ class Client:
         data=json.loads(r.text.replace("'",'"'))
         
         
+        '''
+        
         if data['server_ip'] != server_ip:
             raise Exception('Se ha recibido información no procedente del servidor')
             
-        
+        '''
+
         '''
         return str({"State":"OK","client_max_speed": server.max_speed[route_type], \
                "ip_list": server.client_ips, "rsa_keys_list": server.rsa_keys })
@@ -125,9 +132,12 @@ def add_new_neighbour(self):
     print('Se ha agregado un vecino ')
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
     
-    
+    '''    
     if data['server_ip'] != server_ip:
             raise Exception('Se ha recibido información no procedente del servidor')
+    '''
+    if data['server_ip'] != request.remote_addr:
+        raise Exception('Se ha recibido información no procedente del servidor')
     
     #Añadimos la IP y la clave RSA a la lista almacenada por el cliente.
     self.other_clients[data['client_ip']]=data['client_rsa_key']
@@ -137,9 +147,13 @@ def add_new_neighbour(self):
 def modify_speed(self):
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
     
+    '''    
     if data['server_ip'] != server_ip:
             raise Exception('Se ha recibido información no procedente del servidor')
-
+    '''
+    if data['server_ip'] != request.remote_addr:
+        raise Exception('Se ha recibido información no procedente del servidor')
+    
     #Solo si tiene el tipo de vía modificado.
     if self.route_type==data['route_type']:
         self.max_speed=data['max_speed']
