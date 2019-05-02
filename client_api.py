@@ -100,9 +100,9 @@ class Client:
         
     def save_bs(self):
         with open(RED_BASH, 'w+', encoding='utf-8') as bs_file:
-            for client in self.other_clients:
-                if client.client_ip != self.client_ip:
-                    info = BASH_FILE[0] + client.client_ip + BASH_FILE[1] + client.client_ip.split('.')[-1] + BASH_FILE[2]
+            for client in self.other_clients.keys():
+                if client != self.client_ip:
+                    info = BASH_FILE[0] + client + BASH_FILE[1] + client.split('.')[-1] + BASH_FILE[2]
                     bs_file.write(info)
 
 
@@ -175,6 +175,6 @@ def modify_speed():
 
 if __name__ == '__main__':
     
-    client=Client('route2')    
+    client=Client('route1')    
     client.run()
       
