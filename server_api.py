@@ -65,7 +65,9 @@ class Server:
         self.client_ips=list()
         self.rsa_keys={}
         self.speeds_file='speed_db'
+        self.infractions_file='infractions_db'
         self.max_speed=self.__load_speeds()
+        self.infractions=self.__load_infractions()
         self.puerto=5555
         self.ip=run_cmd('hostname -I')+':'+str(self.puerto)
 
@@ -87,6 +89,27 @@ class Server:
             self.max_speed[parsed_line[0]]= json.loads(parsed_line[1].replace("'",'"'))
         
         return self.max_speed
+    
+    
+    def __load_infractions(self):
+        with open(self.infractions_file, "r") as myfile:
+            lines = myfile.readlines()
+        
+        print(lines)
+        #Diccionario cuya clave será el tipo de ruta y el valor una lista con infracciones. Cada infracción tendrá la velocidad a la que iba y la fecha.
+        self.infractions={}
+        for x in lines:
+            line=x.split("&&&&")
+            if line[0] in self.infractions:
+                self.infractions[line[0]].append((line[1],line[2][:-1]))
+            else:
+                self.infractions[line[0]]=[(line[1],line[2][:-1])]
+        print(self.infractions)
+    
+    def save_infraction(self,route_type, speed, date):
+        with open(self.infractions_file, "a") as myfile:
+            line=route_type+ "&&&&" +speed +"&&&&"+date + '\n'
+            myfile.write(line)
     
     def run(self):
         app.run(debug=False, host='0.0.0.0', port=self.puerto) 
@@ -149,6 +172,10 @@ def process_infraction():
     print('Velocidad real de la infracción: ', real_speed)
     print('Velocidad máxima asociada al tipo de tramo: ', max_speed)
 
+
+    #La almacenamos en el fichero de infracciones.
+    server.save_infraction(route_type,real_speed,date)
+    
     
     #Realizamos las actualizaciones que corresponda.
     return str({"State":"OK"})
