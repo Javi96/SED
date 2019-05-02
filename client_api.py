@@ -11,7 +11,6 @@ from utils import run_cmd, run_rsa
 #RSA_PATH_JAVI = '/home/javi/.ssh/id_rsa.pub'
 RSA_PATH_RASP = '/etc/ssh/ssh_host_ed25519_key.pub'
 
-
 # pasamos la ip del server y puerto por parametro: <<ip>> <<port>> 
 server_ip= str(sys.argv[1]) + ':' + str(sys.argv[2])
 
@@ -99,15 +98,21 @@ def state():
 @app.route('/informa_infraccion/<time>/<speed>')
 def informa_infraccion(time, speed):
     #Informa al servidor de que ha sucedido una infracción.
-    u="http://"+client.server_ip+"/infraction"
-    p={'client_route_type': client.route_type, \
-       'client_infraction_date': 'FECHA' , 'client_max_speed': client.max_speed,
-       'client_real_speed':speed }
     
-    #Se envía esta información al servidor.
-    requests.post(url=u, json=p)        
-    #POR AHORA, NO ESPERAMOS RESPUESTA
-
+    if float(speed) > float(client.max_speed):
+        u="http://"+client.server_ip+"/infraction"
+        p={'client_route_type': client.route_type, \
+           'client_infraction_date': time , 'client_max_speed': client.max_speed,
+           'client_real_speed':speed }
+        
+        #Se envía esta información al servidor.
+        requests.post(url=u, json=p)        
+        #POR AHORA, NO ESPERAMOS RESPUESTA
+        
+        with open('')
+        
+        return 'True'
+    return 'False'
 
 @app.route('/add_new_neigh',methods=['GET','POST'])
 def add_new_neighbour():
@@ -138,4 +143,4 @@ if __name__ == '__main__':
     
     client=Client('route1')    
     client.run()
-	  
+      
