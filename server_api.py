@@ -85,6 +85,20 @@ class Server:
         
         return self.max_speed
     
+    def change_road_speed(self,route_type,new_speed):
+        if route_type in self.max_speed:
+            self.max_speed[route_type]=new_speed
+        '''  
+            #Informamos a los clientes sobre la nueva moficación.
+            for x in server.client_ips:
+                u="http://"+x+"/modify_speed"
+                p={'route_type':route_type, 'new_speed':new_speed, 'server_ip': server.ip}
+                r = requests.post(url=u, json=p)
+                print(r)
+        '''
+            
+        #Si ese tipo de ruta no existe, no hace nada.
+        print('Se ha intentado modificar un tipo de vía no existente.')
     
     def run(self):
         app.run(debug=False, host='0.0.0.0', port=self.puerto) 

@@ -133,11 +133,20 @@ def add_new_neighbour(self):
     self.other_clients[data['client_ip']]=data['client_rsa_key']
 
 
+@app.route('/modify_speed',methods=['GET','POST'])
+def modify_speed(self):
+    data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
+    
+    if data['server_ip'] != server_ip:
+            raise Exception('Se ha recibido información no procedente del servidor')
+
+    #Solo si tiene el tipo de vía modificado.
+    if self.route_type==data['route_type']:
+        self.max_speed=data['max_speed']
 
 
 if __name__ == '__main__':
     
     client=Client('route1')    
-    
     client.run()
 	  
