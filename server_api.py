@@ -85,16 +85,7 @@ class Server:
         
         return self.max_speed
     
-    def change_road_speed(self,route_type,new_speed):
-        if route_type in self.max_speed:
-            self.max_speed[route_type]=new_speed
-         
-            #Informamos a los clientes sobre la nueva moficación.
-            for x in server.client_ips:
-                u="http://"+x+"/modify_speed"
-                p={'route_type':route_type, 'new_speed':new_speed, 'server_ip': server.ip}
-                r = requests.post(url=u, json=p)
-                print(r)
+
         
             
         #Si ese tipo de ruta no existe, no hace nada.
@@ -111,7 +102,20 @@ class Server:
 def state():
     return 'Server API avaliable'
 
-
+@app.route('/new_speed/<route_type>/<new_speed>', methods=['GET'])
+def change_road_speed(route_type,new_speed):
+    print(route_type)
+    print(new_speed)
+    if route_type in server.max_speed:
+        server.max_speed[route_type]=new_speed
+        
+        #Informamos a los clientes sobre la nueva moficación.
+        for x in server.client_ips:
+            u="http://"+x+":5555/modify_speed"
+            p={'route_type':route_type, 'max_speed':new_speed, 'server_ip': server.ip}
+            r = requests.post(url=u, json=p)
+            print(r)
+    return 'OK'
 '''
     Método para informar al servidor de que ha sucedido una infracción.
         
