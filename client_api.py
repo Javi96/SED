@@ -61,11 +61,11 @@ class Client:
         
         self.other_clients={} 
         #self.server_ip = server_ip
-        self.server_ip=request.remote_addr
+        self.server_ip=server_ip
         self.port = '5555'
         self.client_ip = run_cmd('hostname -I') + ':' + self.port
         self.route_type = rt
-        self.rsa_key= run_rsa('ssh-keygen -lf ' + RSA_PATH_JAVI)
+        self.rsa_key= run_rsa('ssh-keygen -lf ' + RSA_PATH_RASP)
         
         #El cliente estable conexión con el servidor.
         #La conexión se realiza mediante la conexión post.
@@ -103,7 +103,7 @@ class Client:
     def run(self): 
         app.run(debug=False, host='0.0.0.0', port=self.port) 
 
-    def informa_infracción(self, time, speed):
+    def informa_infraccion(self, time, speed):
         #Informa al servidor de que ha sucedido una infracción.
         u="http://"+self.server_ip+"/infraction"
         p={'client_route_type': self.route_type, \
@@ -127,7 +127,7 @@ def state():
 
 
 @app.route('/add_new_neigh',methods=['GET','POST'])
-def add_new_neighbour(self):
+def add_new_neighbour():
     print('Se ha agregado un vecino ')
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
     
@@ -139,7 +139,7 @@ def add_new_neighbour(self):
         raise Exception('Se ha recibido información no procedente del servidor')
     
     #Añadimos la IP y la clave RSA a la lista almacenada por el cliente.
-    self.other_clients[data['client_ip']]=data['client_rsa_key']
+    client.other_clients[data['client_ip']]=data['client_rsa_key']
 
 
 @app.route('/modify_speed',methods=['GET','POST'])

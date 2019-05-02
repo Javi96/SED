@@ -171,7 +171,7 @@ def add_client():
     
     
     for x in server.client_ips:
-        
+         print(x)
          #-------------------------------------------------
          #TERMINACIÓN DE LA FUNCIONALIDAD DEL CLIENTE DONDE 
          #RECOGE LA RSA KEY Y LA IP DE UN NUEVO CLIENTE.
@@ -179,11 +179,12 @@ def add_client():
          #X CONTIENE TANTO LA IP COMO EL PUERTO (ENTRE :) EN FORMA DE STRING.
         
          #-------------------------------------------------
-         u="http://"+x+"/add_new_neigh"
+         u="http://"+x+":5555/add_new_neigh"
          p={'client_ip':ip, 'client_rsa_key': rsa_key}
          r = requests.post(url=u, json=p)
          print(r)
-    
+         #print(u)
+         
     #Añadimos la ip del nuevo cliente a la lista de ips.
     server.client_ips.append(ip)
     
