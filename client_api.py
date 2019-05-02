@@ -10,6 +10,19 @@ from utils import run_cmd, run_rsa
 
 #RSA_PATH_JAVI = '/home/javi/.ssh/id_rsa.pub'
 RSA_PATH_RASP = '/etc/ssh/ssh_host_ed25519_key.pub'
+SAVE_FILE_PATH = '/home/pi/db/localhost.txt'
+DB_PATH = '/home/pi/db'
+
+BASH_FILE = ["""
+    SSHPASS=raspberry sshpass -e sftp -oBatchMode=no -b - pi@""", """ << ! 
+    cd /home/pi/db/
+    lcd /home/pi/db/
+    get localhost.txt """, """.txt
+    bye
+    !
+    """]
+
+RED_BASH = '/home/pi/red.sh'
 
 # pasamos la ip del server y puerto por parametro: <<ip>> <<port>> 
 server_ip= str(sys.argv[1]) + ':' + str(sys.argv[2])
@@ -80,6 +93,19 @@ class Client:
         print('IP de los demás clientes: ', self.other_clients)
         print('Tabla de velocidades máximas :', self.max_speed)
         print('Tabla de otras IPs & claves RSA: ', self.other_clients)
+        self.save_bs()
+        
+        
+        
+        
+    def save_bs(self):
+        with open(RED_BASH, 'w+', encoding='utf-8') as bs_file:
+            for client in self.other_clients:
+                if client.client_ip != self.client_ip:
+                    info = BASH_FILE[0] + client.client_ip + BASH_FILE[1] + client.client_ip.split('.')[-1] + BASH_FILE[2]
+                    bs_file.write(info)
+
+
         
     def run(self): 
         app.run(debug=False, host='0.0.0.0', port=self.port) 
@@ -108,8 +134,15 @@ def informa_infraccion(time, speed):
         #Se envía esta información al servidor.
         requests.post(url=u, json=p)        
         #POR AHORA, NO ESPERAMOS RESPUESTA
+        import os
+        if not os.path.exists(DB_PATH):
+            os.makedirs(DB_PATH)
+            
         
-        with open('')
+            
+        with open(SAVE_FILE_PATH, 'a+', encoding='utf-8') as save_file:
+            data = '\t'.join([time, speed]) + '\n'
+            save_file.write(data)
         
         return 'True'
     return 'False'
@@ -124,6 +157,7 @@ def add_new_neighbour():
     #Añadimos la IP y la clave RSA a la lista almacenada por el cliente.
     client.other_clients[data['client_ip']]=data['client_rsa_key']
     print(client.other_clients)
+    client.save_bs()
     return 'ok'
 
 @app.route('/modify_speed',methods=['GET','POST'])
@@ -141,6 +175,6 @@ def modify_speed():
 
 if __name__ == '__main__':
     
-    client=Client('route1')    
+    client=Client('route2')    
     client.run()
       
