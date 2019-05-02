@@ -72,7 +72,7 @@ class Client:
          
         u="http://"+self.server_ip+"/add_client"
         
-        p={'client_ip':self.client_ip, 'client_rsa_key': self.rsa_key, 'client_route_type':self.route_type}
+        p={'client_rsa_key': self.rsa_key, 'client_route_type':self.route_type}
         
         r = requests.post(url=u, json=p)
         
@@ -80,7 +80,6 @@ class Client:
         
         
         '''
-        
         if data['server_ip'] != server_ip:
             raise Exception('Se ha recibido información no procedente del servidor')
             
@@ -107,7 +106,7 @@ class Client:
     def informa_infracción(self, time, speed):
         #Informa al servidor de que ha sucedido una infracción.
         u="http://"+self.server_ip+"/infraction"
-        p={'client_ip':self.client_ip, 'client_route_type': self.route_type, \
+        p={'client_route_type': self.route_type, \
            'client_infraction_date': 'FECHA' , 'client_max_speed': self.max_speed,
            'client_real_speed':speed }
         

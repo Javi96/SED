@@ -88,14 +88,14 @@ class Server:
     def change_road_speed(self,route_type,new_speed):
         if route_type in self.max_speed:
             self.max_speed[route_type]=new_speed
-        '''  
+         
             #Informamos a los clientes sobre la nueva moficación.
             for x in server.client_ips:
                 u="http://"+x+"/modify_speed"
                 p={'route_type':route_type, 'new_speed':new_speed, 'server_ip': server.ip}
                 r = requests.post(url=u, json=p)
                 print(r)
-        '''
+        
             
         #Si ese tipo de ruta no existe, no hace nada.
         print('Se ha intentado modificar un tipo de vía no existente.')
@@ -170,20 +170,19 @@ def add_client():
     #Le pasamos el RSA asociado y su IP.
     
     
-    # for x in server.client_ips:
+    for x in server.client_ips:
         
-    #     #-------------------------------------------------
-    #     #TERMINACIÓN DE LA FUNCIONALIDAD DEL CLIENTE DONDE 
-    #     #RECOGE LA RSA KEY Y LA IP DE UN NUEVO CLIENTE.
+         #-------------------------------------------------
+         #TERMINACIÓN DE LA FUNCIONALIDAD DEL CLIENTE DONDE 
+         #RECOGE LA RSA KEY Y LA IP DE UN NUEVO CLIENTE.
+       
+         #X CONTIENE TANTO LA IP COMO EL PUERTO (ENTRE :) EN FORMA DE STRING.
         
-    #     #X CONTIENE TANTO LA IP COMO EL PUERTO (ENTRE :) EN FORMA DE STRING.
-        
-    #     #-------------------------------------------------
-    #     u="http://"+x+"/add_new_neigh"
-    #     p={'client_ip':ip, 'client_rsa_key': rsa_key, 'server_ip': server.ip}
-    #     r = requests.post(url=u, json=p)
-    #     print(r)
-    
+         #-------------------------------------------------
+         u="http://"+x+"/add_new_neigh"
+         p={'client_ip':ip, 'client_rsa_key': rsa_key}
+         r = requests.post(url=u, json=p)
+         print(r)
     
     #Añadimos la ip del nuevo cliente a la lista de ips.
     server.client_ips.append(ip)
@@ -209,7 +208,7 @@ def add_client():
     #Devolvemos al nuevo cliente: la lista de ips de los demás clientes, la tabla de 
     #velocidades máximas y las claves RSA.
     return str({"State":"OK","client_max_speed": server.max_speed[route_type], \
-               "rsa_keys_list": server.rsa_keys,'server_ip':server.ip })
+               "rsa_keys_list": server.rsa_keys })
 
 if __name__ == '__main__':
     server=Server()
