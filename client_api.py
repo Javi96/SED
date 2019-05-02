@@ -135,28 +135,30 @@ def add_new_neighbour():
     if data['server_ip'] != server_ip:
             raise Exception('Se ha recibido información no procedente del servidor')
     '''
-    if data['server_ip'] != request.remote_addr:
+    if client.server_ip.split(':')[0] != request.remote_addr:
         raise Exception('Se ha recibido información no procedente del servidor')
     
     #Añadimos la IP y la clave RSA a la lista almacenada por el cliente.
     client.other_clients[data['client_ip']]=data['client_rsa_key']
-
+    print(client.other_clients)
+    return 'ok'
 
 @app.route('/modify_speed',methods=['GET','POST'])
-def modify_speed(self):
+def modify_speed():
     data=json.loads(request.get_data().decode('utf8').replace("'",'"'))
     
     '''    
     if data['server_ip'] != server_ip:
             raise Exception('Se ha recibido información no procedente del servidor')
     '''
-    if data['server_ip'] != request.remote_addr:
+    if client.server_ip.split(':')[0] != request.remote_addr:
         raise Exception('Se ha recibido información no procedente del servidor')
     
     #Solo si tiene el tipo de vía modificado.
-    if self.route_type==data['route_type']:
-        self.max_speed=data['max_speed']
-
+    if client.route_type==data['route_type']:
+        client.max_speed=data['max_speed']
+        print('se ha cambiado la velocidad a ', client.max_speed)
+    return 'ok'
 
 if __name__ == '__main__':
     
