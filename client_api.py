@@ -4,7 +4,7 @@ from flask import Flask, request
 import json
 import requests
 import sys
-
+import os
 from utils import run_cmd, run_rsa
 
 
@@ -93,11 +93,18 @@ class Client:
         print('IP de los demás clientes: ', self.other_clients)
         print('Tabla de velocidades máximas :', self.max_speed)
         print('Tabla de otras IPs & claves RSA: ', self.other_clients)
+        self.config_dir()
         self.save_bs()
         
         
         
-        
+    def config_dir(self):
+        if not os.path.exists(DB_PATH):
+            os.makedirs(DB_PATH)
+        if not os.path.isfile(SAVE_FILE_PATH):
+            open(SAVE_FILE_PATH, 'w+').close()
+
+
     def save_bs(self):
         with open(RED_BASH, 'w+', encoding='utf-8') as bs_file:
             for client in self.other_clients.keys():
@@ -134,12 +141,7 @@ def informa_infraccion(time, speed):
         #Se envía esta información al servidor.
         requests.post(url=u, json=p)        
         #POR AHORA, NO ESPERAMOS RESPUESTA
-        import os
-        if not os.path.exists(DB_PATH):
-            os.makedirs(DB_PATH)
-            
         
-            
         with open(SAVE_FILE_PATH, 'a+', encoding='utf-8') as save_file:
             data = '\t'.join([time, speed]) + '\n'
             save_file.write(data)
@@ -174,7 +176,6 @@ def modify_speed():
     return 'ok'
 
 if __name__ == '__main__':
-    
     client=Client('route1')    
     client.run()
       
