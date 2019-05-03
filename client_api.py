@@ -13,14 +13,13 @@ from utils import run_cmd, run_rsa,RSA_PATH_RASP, SAVE_FILE_PATH, DB_PATH, RED_B
 #SAVE_FILE_PATH = '/home/pi/db/localhost.txt'
 #DB_PATH = '/home/pi/db'
 
-BASH_FILE = ["""
-    SSHPASS=raspberry sshpass -e sftp -oBatchMode=no -b - pi@""", """ << ! 
-    cd ./db/
-    lcd ./db/
-    get localhost.txt """, """.txt
-    bye
-    !
-    """]
+BASH_FILE = ["""SSHPASS=raspberry sshpass -e sftp -oBatchMode=no -b - pi@""", """ << ! 
+cd db
+lcd db
+get localhost.txt """, """.txt
+bye
+!
+"""]
 
 #RED_BASH = '/home/pi/red.sh'
 
@@ -107,7 +106,9 @@ class Client:
     def save_bs(self):
         with open(RED_BASH, 'w+', encoding='utf-8') as bs_file:
             for client in self.other_clients.keys():
-                if client != self.client_ip:
+                print(self.other_clients.keys(), type(self.other_clients.keys()))
+                print(self.client_ip, type(self.client_ip))
+                if str(client) != str(self.client_ip.split(':')[0]):
                     info = BASH_FILE[0] + client + BASH_FILE[1] + client.split('.')[-1] + BASH_FILE[2]
                     bs_file.write(info)
 
@@ -175,6 +176,6 @@ def modify_speed():
     return 'ok'
 
 if __name__ == '__main__':
-    client=Client('route5')    
+    client=Client('route6')    
     client.run()
       
