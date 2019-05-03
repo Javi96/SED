@@ -13,6 +13,3 @@ def run_cmd(cmd):
 def run_rsa(cmd):
     return subprocess.check_output(cmd, shell=True).decode('utf-8').split(' ')[1].split(':')[1]
 
-
-if __name__ == '__main__':
-	print(run_rsa('ssh-keygen -lf ' + RSA_PATH_JAVI))

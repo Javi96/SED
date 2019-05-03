@@ -51,7 +51,6 @@ class Client:
         3- route_type: 
             tipo de vía en la que se instancia el cliente.
     
-        
         4- client_ip:
             ip del cliente (RADAR) que se conecta al sistema
         
