@@ -14,8 +14,8 @@ from utils import run_cmd, run_rsa,RSA_PATH_RASP, SAVE_FILE_PATH, DB_PATH, RED_B
 #DB_PATH = '/home/pi/db'
 
 BASH_FILE = ["""SSHPASS=raspberry sshpass -e sftp -oBatchMode=no -b - pi@""", """ << ! 
-cd db
-lcd db
+cd /home/pi/Desktop/github/SED-PROYECTO/db
+lcd /home/pi/Desktop/github/SED-PROYECTO/db
 get localhost.txt """, """.txt
 bye
 !
