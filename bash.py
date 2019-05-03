@@ -3,8 +3,8 @@
 
 import subprocess
 import time
+import os
 
 while True:
-    print('done')
-    subprocess.call(["/home/pi/red.sh"])
+    os.system("./red.sh")
     

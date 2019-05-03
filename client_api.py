@@ -15,8 +15,8 @@ from utils import run_cmd, run_rsa,RSA_PATH_RASP, SAVE_FILE_PATH, DB_PATH, RED_B
 
 BASH_FILE = ["""
     SSHPASS=raspberry sshpass -e sftp -oBatchMode=no -b - pi@""", """ << ! 
-    cd /home/pi/db/
-    lcd /home/pi/db/
+    cd ./db/
+    lcd ./db/
     get localhost.txt """, """.txt
     bye
     !
