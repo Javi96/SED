@@ -5,13 +5,13 @@ import json
 import requests
 import sys
 import os
-from utils import run_cmd, run_rsa
+from utils import run_cmd, run_rsa,RSA_PATH_RASP, SAVE_FILE_PATH, DB_PATH, RED_BASH
 
 
 #RSA_PATH_JAVI = '/home/javi/.ssh/id_rsa.pub'
-RSA_PATH_RASP = '/etc/ssh/ssh_host_ed25519_key.pub'
-SAVE_FILE_PATH = '/home/pi/db/localhost.txt'
-DB_PATH = '/home/pi/db'
+#RSA_PATH_RASP = '/etc/ssh/ssh_host_ed25519_key.pub'
+#SAVE_FILE_PATH = '/home/pi/db/localhost.txt'
+#DB_PATH = '/home/pi/db'
 
 BASH_FILE = ["""
     SSHPASS=raspberry sshpass -e sftp -oBatchMode=no -b - pi@""", """ << ! 
@@ -22,7 +22,7 @@ BASH_FILE = ["""
     !
     """]
 
-RED_BASH = '/home/pi/red.sh'
+#RED_BASH = '/home/pi/red.sh'
 
 # pasamos la ip del server y puerto por parametro: <<ip>> <<port>> 
 server_ip= str(sys.argv[1]) + ':' + str(sys.argv[2])

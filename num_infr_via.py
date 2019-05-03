@@ -11,8 +11,7 @@ ys = []
 def load_infractions(file):
         with open(file, "r") as myfile:
             lines = myfile.readlines()
-        
-        print(lines)
+            
         #Diccionario cuya clave será el tipo de ruta y el valor una lista con infracciones. Cada infracción tendrá la velocidad a la que iba y la fecha.
         infractions={}
         for x in lines:
@@ -60,7 +59,7 @@ def animate(i, xs, ys):
     plt.xlabel('Tipo de vía')
 
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1)
+ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=10000)
 plt.show()
 
 

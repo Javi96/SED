@@ -74,7 +74,7 @@ def animate(i, xs, ys):
     plt.xlabel('Día')
 
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1)
+ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=10000)
 plt.show()
 
 

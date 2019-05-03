@@ -2,7 +2,6 @@ import RPi.GPIO as GPIO
 import time
 import re
 from datetime import datetime
-import urllib
 import requests
 # dinero
 # fiabilidad
