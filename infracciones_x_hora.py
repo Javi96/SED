@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
-# -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
@@ -26,7 +24,6 @@ def load_infractions(file):
         return infractions
 
 infractions=load_infractions('infractions_db')
-#print(infractions)
 
 
 # This function is called periodically from FuncAnimation
@@ -40,17 +37,30 @@ def animate(i, xs, ys):
     # Add x and y to lists
     #xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
     #ys.append(temp_c)
-
+    result={}
+    
     for k, v in infractions.items():
-        
-        
-        
-        ys.append(len(v))
+        #v es una lista de pares. El segundo elemento es la fecha de la infracción.
+        for x in v:
+            
+            #PONER LOS INDICES BIEN
+            date=x[1].split('_')[4] #En la segunda posición se encuentran las horas.
+            #date=date + ' del ' +x[1].split('_')[3]
+            if date in result:
+                result[date]=result[date] +1
+            else:
+                result[date]=1
+                
+    for k,v in result.items():
+        xs.append(k)
+        ys.append(v)
+            
+    #ys.append(len(v))
 
 
     # Limit x and y lists to 20 items
-    xs = xs[-20:]
-    ys = ys[-20:]
+    #xs = xs[-20:]
+    #ys = ys[-20:]
 
     # Draw x and y lists
     ax.clear()
@@ -59,12 +69,12 @@ def animate(i, xs, ys):
     # Format plot
     plt.xticks(rotation=45, ha='right')
     plt.subplots_adjust(bottom=0.30)
-    plt.title('Número de infracciones por tipo de vía')
+    plt.title('Número de infracciones por día')
     plt.ylabel('Número de infracciones')    
-    plt.xlabel('Tipo de vía')
+    plt.xlabel('Día')
 
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1000)
+ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1)
 plt.show()
 
 

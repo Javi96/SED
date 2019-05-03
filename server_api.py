@@ -90,7 +90,6 @@ class Server:
         
         return self.max_speed
     
-    
     def __load_infractions(self):
         with open(self.infractions_file, "r") as myfile:
             lines = myfile.readlines()
@@ -110,6 +109,12 @@ class Server:
         with open(self.infractions_file, "a") as myfile:
             line=route_type+ "&&&&" +speed +"&&&&"+date + '\n'
             myfile.write(line)
+    
+    def save_speeds(self):
+         with open(self.speeds_file, "w+") as myfile:
+            for x, y in self.max_speed.items():
+                line= str(x)+ ' '+str(y) + '\n'  
+                myfile.write(line)
     
     def run(self):
         app.run(debug=False, host='0.0.0.0', port=self.puerto) 
@@ -143,6 +148,11 @@ def change_road_speed(route_type,new_speed):
             r=requests.post(url=u, json=p)
             print('-Sended to ',x,':5555. Response: ', r)
             
+        #Sobreescribimos el contenido del fichero dónde se almacena la información sobre las velocidades.
+        server.save_speeds()
+        
+        
+        
         return 'OK'
 
     #Si ese tipo de ruta no existe, no hace nada.
