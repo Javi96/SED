@@ -29,6 +29,8 @@ infractions=load_infractions('infractions_db')
 # This function is called periodically from FuncAnimation
 def animate(i, xs, ys):
     ax.clear()
+    xs=[]
+    ys=[]
     # Read temperature (Celsius) from TMP102
     #temp_c = round(random.randint(0, 5), 2)
 
@@ -44,8 +46,8 @@ def animate(i, xs, ys):
 
 
     # Limit x and y lists to 20 items
-    xs = xs[-20:]
-    ys = ys[-20:]
+    #xs = xs[-20:]
+    #ys = ys[-20:]
 
     # Draw x and y lists
     ax.clear()
@@ -59,7 +61,7 @@ def animate(i, xs, ys):
     plt.xlabel('Tipo de vía')
 
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=10000)
+ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1000)
 plt.show()
 
 
