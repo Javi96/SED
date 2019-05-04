@@ -8,11 +8,11 @@ import requests
 # tasa de fallos
     
 GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 
 #led = 21
-pir1 = sys.argv[1]
-pir2 = sys.argv[2]
+pir1 = 20
+pir2 = 26
 dist = 10
 time_sensor = list()
 
@@ -60,3 +60,4 @@ except Exception as e:
 
 
 # conexion de los pines de los sm --> vcc,gcc,out
+
