@@ -14,5 +14,5 @@ def run_cmd(cmd):
     return ip[0]
 
 def run_rsa(cmd):
-    return subprocess.check_output(cmd, shell=True).decode('utf-8').split(' ')[1].split(':')[1]
+    return '_'.join( subprocess.check_output(cmd, shell=True).decode('utf-8').split(' ')[:-1] )
 

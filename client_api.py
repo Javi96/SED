@@ -121,7 +121,7 @@ class Client:
                 #print(self.other_clients.keys(), type(self.other_clients.keys()))
                 #print(self.client_ip, type(self.client_ip))
                 if str(client) != str(self.client_ip.split(':')[0]):
-                    info = client + " " + self.other_clients[client] + "\n"
+                    info = client + " " + self.other_clients[client].replace("_"," ") + "\n"
                     key_file.write(info)
 
         
