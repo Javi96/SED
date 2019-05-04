@@ -50,7 +50,7 @@ try:
             info = re.sub(r'[\:\.\-\s]', '_', str(aux2))
             url = "http://localhost:5555/informa_infraccion/" + '/'.join([info, res])
             
-            #r = requests.get(url)    
+            r = requests.get(url)    
             
             state = 0
             time.sleep(2)
