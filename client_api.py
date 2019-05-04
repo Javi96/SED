@@ -21,6 +21,8 @@ bye
 !
 """]
 
+KEYS_FILE = "/home/pi/.ssh/known_hosts"
+
 #RED_BASH = '/home/pi/red.sh'
 
 # pasamos la ip del server y puerto por parametro: <<ip>> <<port>> 
@@ -73,7 +75,8 @@ class Client:
         self.port = '5555'
         self.client_ip = run_cmd('hostname -I') + ':' + self.port
         self.route_type = rt
-        self.rsa_key= run_rsa('ssh-keygen -lf ' + RSA_PATH_RASP)
+        #self.rsa_key= run_rsa('ssh-keygen -lf ' + RSA_PATH_RASP)
+        self.rsa_key= run_rsa('cat ' + RSA_PATH_RASP)
         
         #El cliente estable conexión con el servidor.
         #La conexión se realiza mediante la conexión post.
@@ -93,7 +96,7 @@ class Client:
         print('Tabla de otras IPs & claves RSA: ', self.other_clients)
         self.config_dir()
         self.save_bs()
-        
+        self.save_key()
         
         
     def config_dir(self):
@@ -106,12 +109,20 @@ class Client:
     def save_bs(self):
         with open(RED_BASH, 'w+', encoding='utf-8') as bs_file:
             for client in self.other_clients.keys():
-                print(self.other_clients.keys(), type(self.other_clients.keys()))
-                print(self.client_ip, type(self.client_ip))
+                #print(self.other_clients.keys(), type(self.other_clients.keys()))
+                #print(self.client_ip, type(self.client_ip))
                 if str(client) != str(self.client_ip.split(':')[0]):
                     info = BASH_FILE[0] + client + BASH_FILE[1] + client.split('.')[-1] + BASH_FILE[2]
                     bs_file.write(info)
-
+    
+    def save_key(self):
+        with open(KEYS_FILE, 'w+', encoding='utf-8') as key_file:
+            for client in self.other_clients.keys():
+                #print(self.other_clients.keys(), type(self.other_clients.keys()))
+                #print(self.client_ip, type(self.client_ip))
+                if str(client) != str(self.client_ip.split(':')[0]):
+                    info = client + " " + self.other_clients[client] + "\n"
+                    key_file.write(info)
 
         
     def run(self): 
@@ -160,6 +171,7 @@ def add_new_neighbour():
     client.other_clients[data['client_ip']]=data['client_rsa_key']
     print(client.other_clients)
     client.save_bs()
+    client.save_key()
     return 'ok'
 
 @app.route('/modify_speed',methods=['GET','POST'])
