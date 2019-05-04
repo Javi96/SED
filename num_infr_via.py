@@ -1,71 +1,52 @@
 # -*- coding: utf-8 -*-
+
+
+'''
+    Utilizando el contenido del fichero "infractions_db", genera una gráfica en tiempo real que muestra
+    el número de infracciones que se han detectado para cada tipo de ruta.
+'''
+
+
+#Imports necesarios.
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from utils import load_infractions
 
-# Create figure for plotting
+
+# Creamos la figura que se va a dibujar.
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
+
+#Lista de elementos que representarán el contenido de los ejes x e y de la gráfica.
 xs = []
 ys = []
 
-def load_infractions(file):
-        with open(file, "r") as myfile:
-            lines = myfile.readlines()
-            
-        #Diccionario cuya clave será el tipo de ruta y el valor una lista con infracciones. Cada infracción tendrá la velocidad a la que iba y la fecha.
-        infractions={}
-        for x in lines:
-            line=x.split("&&&&")
-            if line[0] in infractions:
-                infractions[line[0]].append((line[1],line[2][:-1]))
-            else:
-                infractions[line[0]]=[(line[1],line[2][:-1])]
-        return infractions
-
-infractions=load_infractions('infractions_db')
-#print(infractions)
-
-
-# This function is called periodically from FuncAnimation
+#Esta función se llamará de forma periódica. De esta forma, se irán mostrando las actualizaciones en la gráfica.
 def animate(i, xs, ys):
     ax.clear()
     xs=[]
     ys=[]
-    # Read temperature (Celsius) from TMP102
-    #temp_c = round(random.randint(0, 5), 2)
 
+    #Cargamos las infracciones que almacena el sistema.
     infractions=load_infractions('infractions_db')
-
-    # Add x and y to lists
-    #xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
-    #ys.append(temp_c)
-
+    
+    
+    #Para cada tipo de ruta, obtenemos el número de infracciones que ha sucedido y lo insertamos el la lista de elementos de los ejes x e y.
     for k, v in infractions.items():
         xs.append(k)
         ys.append(len(v))
 
-
-    # Limit x and y lists to 20 items
-    #xs = xs[-20:]
-    #ys = ys[-20:]
-
-    # Draw x and y lists
+    #Dibujamos el contenido de las listas xs e ys.
     ax.clear()
     ax.plot(xs, ys)
 
-    # Format plot
+    #Especificamos el formato de la gráfica.
     plt.xticks(rotation=45, ha='right')
     plt.subplots_adjust(bottom=0.30)
     plt.title('Número de infracciones por tipo de vía')
     plt.ylabel('Número de infracciones')    
     plt.xlabel('Tipo de vía')
 
-# Set up plot to call animate() function periodically
+#Especificamos cómo se llamará a la función "animate" de forma periódica y mostramos la gráfica.
 ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1000)
 plt.show()
-
-
-
-
-
-    

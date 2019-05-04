@@ -1,22 +1,32 @@
+# -*- coding: utf-8 -*-
+
+'''
+    Funcionalidades asociadas al uso de los sensores de movimiento para la detección de infracciones.
+    
+    Se utilizan los instantes en los que cada sensor detecta movimiento para inferir la velocidad a la que 
+    iba el potencial infractor.
+    
+    Esta velocidad se proporcionará al cliente para que este determine, en función del tipo de vía en el que se 
+    establece el radar, si ha producido una infracción.
+'''
+
+#Imports del radar
 import RPi.GPIO as GPIO
 import time
 import re
 from datetime import datetime
 import requests
-# dinero
-# fiabilidad
-# tasa de fallos
     
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
-#led = 21
 pir1 = 20
 pir2 = 26
 dist = 10
 time_sensor = list()
 
-#GPIO.setup(led, GPIO.OUT) 
+
 GPIO.setup(pir1, GPIO.IN, GPIO.PUD_DOWN) 
 GPIO.setup(pir2, GPIO.IN, GPIO.PUD_DOWN) 
 
