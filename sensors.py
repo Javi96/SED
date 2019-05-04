@@ -8,11 +8,11 @@ import requests
 # tasa de fallos
     
 GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 
 #led = 21
-pir1 = sys.argv[1]
-pir2 = sys.argv[2]
+pir1 = 20
+pir2 = 26
 dist = 10
 time_sensor = list()
 
@@ -50,7 +50,7 @@ try:
             info = re.sub(r'[\:\.\-\s]', '_', str(aux2))
             url = "http://localhost:5555/informa_infraccion/" + '/'.join([info, res])
             
-            r = requests.get(url)    
+            #r = requests.get(url)    
             
             state = 0
             time.sleep(2)
